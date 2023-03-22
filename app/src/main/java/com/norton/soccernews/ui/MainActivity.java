@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,8 +14,10 @@ import com.norton.soccernews.R;
 import com.norton.soccernews.data.MatchesApi;
 import com.norton.soccernews.databinding.ActivityMainBinding;
 import com.norton.soccernews.domain.Match;
+import com.norton.soccernews.ui.adapter.MatchesAdapter;
 
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private MatchesApi matchesApi;
-    private RecyclerView.Adapter matchesAdapter;
+    private MatchesAdapter matchesAdapter;
 
 
     @Override
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         setupHttpClient();
         setupMatchesList();
+        setupMatchesRefresh();
+        setupFloatingActionButton();
     }
 
     private void setupHttpClient() {
@@ -49,6 +55,37 @@ public class MainActivity extends AppCompatActivity {
     private void setupMatchesList() {
         binding.rvMatches.setHasFixedSize(true);
         binding.rvMatches.setLayoutManager(new LinearLayoutManager(this));
+        findMatchesFromApi();
+    }
+
+    private void setupMatchesRefresh() {
+        binding.srlMatches.setOnRefreshListener(this::findMatchesFromApi);
+    }
+
+    private void setupFloatingActionButton() {
+        binding.fabMatches.setOnClickListener(view -> {
+            view.animate().rotationBy(360).setDuration(500).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    Log.i("Random", "PASS HERE");
+                    super.onAnimationEnd(animation);
+                    Random random = new Random();
+                    for (int i = 0; i < matchesAdapter.getItemCount(); i++) {
+                        Match match = matchesAdapter.getMatches().get(i);
+                        match.getHomeTeam().setScore(Integer.valueOf(match.getHomeTeam().getStars()+ 1));
+                        match.getAwayTeam().setScore(Integer.valueOf(match.getAwayTeam().getStars()+ 1));
+                        matchesAdapter.notifyItemChanged(i);
+                        Log.i("MATCH", "MACTH" + Integer.valueOf(match.getHomeTeam().getStars()+ 1) );
+
+                    }
+                }
+
+            });
+        });
+    }
+
+    private void findMatchesFromApi() {
+        binding.srlMatches.setRefreshing(true);
         matchesApi.getMacthes().enqueue(new Callback<List<Match>>() {
             @Override
             public void onResponse(Call<List<Match>> call, Response<List<Match>> response) {
@@ -60,10 +97,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     showErrorMessage();
                 }
+                binding.srlMatches.setRefreshing(false);
+
             }
 
             @Override
             public void onFailure(Call<List<Match>> call, Throwable t) {
+                binding.srlMatches.setRefreshing(false);
                 showErrorMessage();
             }
         });

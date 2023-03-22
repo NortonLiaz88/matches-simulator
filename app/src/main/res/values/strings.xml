@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Soccer News</string>
+    <string name="app_name">Matches Simulator</string>
     <string name="text_match">Botão para gerar partida</string>
     <string name="cd_home_team">Imagem do time mandante</string>
     <string name="cd_home_team_name">Nome do time mandante</string>

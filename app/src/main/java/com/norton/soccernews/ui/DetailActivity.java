@@ -10,6 +10,7 @@ import com.norton.soccernews.databinding.ActivityMainBinding;
 
 public class DetailActivity extends AppCompatActivity {
 
+    public static String Extras;
     private ActivityDetailBinding binding;
 
     @Override

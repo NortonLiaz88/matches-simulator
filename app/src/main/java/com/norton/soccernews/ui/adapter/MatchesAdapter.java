@@ -1,13 +1,17 @@
-package com.norton.soccernews.ui;
+package com.norton.soccernews.ui.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.norton.soccernews.databinding.MatchItemBinding;
 import com.norton.soccernews.domain.Match;
+import com.norton.soccernews.ui.DetailActivity;
 
 import java.util.List;
 
@@ -19,6 +23,10 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
         this.matches = matches;
     }
 
+    public List<Match> getMatches() {
+        return matches;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -28,9 +36,25 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         Match match = matches.get(position);
+
+        Glide.with(context).load(match.getHomeTeam().getImage()).circleCrop().into(holder.binding.ivHomeTeam);
         holder.binding.tvHomeTeamName.setText(match.getHomeTeam().getName());
+        if(match.getHomeTeam().getScore() != null) {
+            holder.binding.tvHomeTeamScore.setText(String.valueOf(match.getHomeTeam().getScore()));
+        }
+        Glide.with(context).load(match.getAwayTeam().getImage()).circleCrop().into(holder.binding.ivAwayTeam);
         holder.binding.tvAwayTeamName.setText(match.getAwayTeam().getName());
+        if(match.getAwayTeam().getScore() != null) {
+            holder.binding.tvAwayScore.setText(String.valueOf(match.getAwayTeam().getScore()));
+        }
+
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra(DetailActivity.Extras, match);
+            context.startActivity(intent);
+        });
     }
 
     @Override
