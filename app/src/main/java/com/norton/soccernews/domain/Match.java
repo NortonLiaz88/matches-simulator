@@ -1,9 +1,15 @@
 package com.norton.soccernews.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Match {
+    @SerializedName("descrição")
     private String description;
+    @SerializedName("local")
     private Place place;
+    @SerializedName("mandante")
     private Team homeTeam;
+    @SerializedName("visitante")
     private Team awayTeam;
 
     public String getDescription() {

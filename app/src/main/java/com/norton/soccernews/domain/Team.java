@@ -1,8 +1,13 @@
 package com.norton.soccernews.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Team {
+    @SerializedName("nome")
     private String name;
+    @SerializedName("força")
     private Integer stars;
+    @SerializedName("imagem")
     private String image;
 
     public String getName() {

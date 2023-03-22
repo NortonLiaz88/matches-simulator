@@ -8,4 +8,5 @@
     <string name="cd_away_team">Imagem time da casa visistante</string>
     <string name="cd_away_team_score">Pontuação time visitante</string>
     <string name="cd_away_team_name">Nome do time visitante</string>
+    <string name="error_api">Unexpected error</string>
 </resources>
